@@ -44,5 +44,7 @@ module.exports = (grunt) ->
         jQuery: true
     uglify: {}
 
+  grunt.loadNpmTasks 'grunt-contrib-coffee'
+
   # Default task.
   grunt.registerTask 'default', 'coffee concat min'
