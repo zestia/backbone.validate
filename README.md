@@ -1,6 +1,6 @@
-# Backbone Validate
+# Backbone.Validate
 
-Making Backbone model validation simple
+Simple Backbone model validation
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
@@ -12,7 +12,18 @@ Download the [production version][min] or the [development version][max].
 _(Coming soon)_
 
 ## Examples
-_(Coming soon)_
+
+```coffeescript
+class Person extends Backbone.Model
+  validations:
+    name:
+      required: true
+      minLength: 3
+    emailAddress:
+      email: true
+    age:
+      range: [0, 200]
+```
 
 ## Release History
 _(Nothing yet)_

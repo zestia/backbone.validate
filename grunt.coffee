@@ -1,4 +1,4 @@
-# /*global module:false*/
+# To run: grunt --config ./grunt.coffee
 module.exports = (grunt) ->
 
   # Project configuration

@@ -1,7 +1,7 @@
 {
   "name": "backbone.validate",
   "title": "Backbone Validate",
-  "description": "Making Backbone model validation simple",
+  "description": "Simple Backbone model validation",
   "version": "0.1.0",
   "homepage": "https://github.com/zestia/backbone.validate",
   "author": {
