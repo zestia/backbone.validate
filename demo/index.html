@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Backbone Validate Demo</title>
+
+    <script src="../lib/jquery.min.js"></script>
+    <script src="../lib/underscore.min.js"></script>
+    <script src="../lib/backbone.min.js"></script>
+    <script src="../dist/backbone.validate.js"></script>
+  </head>
+  <body>
+    <input id="title" type="text"/>
+    
+    <script>
+      var Example = new Backbone.Model.extend({
+        validations: {
+          title: {
+            required: true
+          }
+        }
+      });
+
+      var ex = new Example({
+        title: $('#title').val() || null
+      });
+
+      ex.on('error', function(model, obj) {
+        console.log('error!', model, obj)
+      });
+    </script>
+  </body>
+</html>
