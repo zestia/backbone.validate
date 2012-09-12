@@ -11,22 +11,31 @@
   </head>
   <body>
     <input id="title" type="text"/>
+    <button>Validate</button>
     
     <script>
-      var Example = new Backbone.Model.extend({
-        validations: {
-          title: {
-            required: true
+      $(function() {
+        var Example = Backbone.Model.extend({
+          validations: {
+            title: {
+              required: true
+            }
           }
-        }
-      });
+        });
 
-      var ex = new Example({
-        title: $('#title').val() || null
-      });
+        var ex = new Example();
+        
+        ex.on('error', function(model, obj) {
+          console.log('error!', model, obj)
+        });
 
-      ex.on('error', function(model, obj) {
-        console.log('error!', model, obj)
+        var $title = $('#title');
+        $('button').click(function(e) {
+          e.preventDefault();
+          ex.set({
+            title: $title.val() || null
+          });
+        });
       });
     </script>
   </body>
