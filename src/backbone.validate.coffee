@@ -18,7 +18,6 @@ Backbone.Model::validate = (attrs, options) ->
             else
               getMessage validationName, option
 
-    console.log 'errors', errors
     if not _.isEmpty errors then return errors
 
 hasValue = (value) ->

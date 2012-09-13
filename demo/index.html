@@ -8,34 +8,71 @@
     <script src="../lib/underscore.min.js"></script>
     <script src="../lib/backbone.min.js"></script>
     <script src="../dist/backbone.validate.js"></script>
+
+    <style type="text/css">
+      ul { list-style: none; }
+    </style>
   </head>
   <body>
-    <input id="title" type="text"/>
-    <button>Validate</button>
+    <ul>
+      <li>
+        <input id="name" type="text"/>
+      </li>
+      <li>
+        <input id="email" type="text"/>
+      </li>
+      <li>
+        <input id="age" type="text"/>
+      </li>
+      <li>
+        <button>Validate</button>
+      </li>
+    </ul>
     
     <script>
       $(function() {
-        var Example = Backbone.Model.extend({
+        var ExampleModel = Backbone.Model.extend({
           validations: {
-            title: {
+            name: {
               required: true
+            },
+            email: {
+              email: true
+            },
+            age: {
+              range: [0, 200]
             }
           }
         });
 
-        var ex = new Example();
-        
-        ex.on('error', function(model, obj) {
-          console.log('error!', model, obj)
+        var ExampleView = Backbone.View.extend({
+          el: 'body',
+          events: {
+            'click button': 'submit'
+          },
+          initialize: function() {
+            this.model = new ExampleModel();
+            this.model.on('error', $.proxy(this.error, this));
+            this.$name = this.$('#name');
+            this.$email = this.$('#email');
+            this.$age = this.$('#age');
+          },
+          submit: function(e) {
+            e.preventDefault();
+            this.$('.error').remove();
+            this.model.set({
+              name: this.$name.val() || null,
+              email: this.$email.val() || null,
+              age: this.$age.val() || null        
+            });
+          },
+          error: function(model, obj) {
+            console.log('error!', model, obj);
+            this.renderErrors(obj);
+          }
         });
 
-        var $title = $('#title');
-        $('button').click(function(e) {
-          e.preventDefault();
-          ex.set({
-            title: $title.val() || null
-          });
-        });
+        new ExampleView();
       });
     </script>
   </body>
