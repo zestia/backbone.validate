@@ -77,7 +77,7 @@
   messages = {
     required: 'is required',
     min: 'must be greater than or equal to {{min}}',
-    max: 'must be less than or equal to {value}',
+    max: 'must be less than or equal to {{max}}',
     range: 'must be between {{0}} and {{1}}',
     minLength: 'length must be greater than or equal to {{minLength}}',
     maxLength: 'length must be less than or equal to {{maxLength}}',
