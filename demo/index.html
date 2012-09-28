@@ -24,10 +24,17 @@
       <li>
         <input id="age" type="text"/>
       </li>
+    </ul>
+
+    <ul id="phoneNumbers">
       <li>
-        <button>Validate</button>
+        <input name="phoneNumber" type="text"/>
+        <input name="type" type="text"/>
       </li>
     </ul>
+    <button id="addPhoneNumber">Add Phone Number</button>
+
+    <button id="validate">Validate</button>
     
     <script>
       $(function() {
@@ -41,6 +48,17 @@
             },
             age: {
               range: [0, 200]
+            },
+            phoneNumbers: {
+              phoneNumber: {
+                required: true,
+                custom: function(v) {
+                  if(v === '') return 'BOOM!';
+                }
+              },
+              type: {
+                required: true
+              }
             }
           }
         });
@@ -48,7 +66,8 @@
         var ExampleView = Backbone.View.extend({
           el: 'body',
           events: {
-            'click button': 'submit'
+            'click #addPhoneNumber': 'addPhoneNumber',
+            'click #validate': 'submit'
           },
           initialize: function() {
             this.model = new ExampleModel();
@@ -56,14 +75,33 @@
             this.$name = this.$('#name');
             this.$email = this.$('#email');
             this.$age = this.$('#age');
+            this.$phoneNumbers = this.$('#phoneNumbers');
+          },
+          addPhoneNumber: function(e) {
+            e.preventDefault();
+
+            this.$phoneNumbers.append('<li><input type="text"/></li>');
           },
           submit: function(e) {
             e.preventDefault();
             this.$('.error').remove();
+
+            /*pn = _.map(this.$phoneNumbers.find('input'), function(p) {
+              $p = $(p);
+              return {
+                phoneNumber: 
+              };
+            });
+            console.log('pn', pn);*/
+
             this.model.set({
-              name: this.$name.val() || null,
-              email: this.$email.val() || null,
-              age: this.$age.val() || null        
+              name: this.$name.val() || '',
+              email: this.$email.val() || '',
+              age: this.$age.val() || '',
+              phoneNumbers: {
+                phoneNumber: this.$phoneNumbers.find('input[name=phoneNumber]').val(),
+                type: this.$phoneNumbers.find('input[name=type]').val()
+              }
             });
           },
           error: function(model, obj) {

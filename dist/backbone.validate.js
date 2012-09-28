@@ -1,9 +1,5 @@
-/*! Backbone Validate - v0.1.0 - 2012-09-13
-* https://github.com/zestia/backbone.validate
-* Copyright (c) 2012 Ross Grayton; Licensed MIT */
-
 (function() {
-  var getMessage, hasValue, messages, patterns, validators,
+  var applyValidations, getDisplayMessage, getMessage, hasValue, messages, patterns, validators,
     _this = this;
 
   Backbone.Model.prototype.validate = function(attrs, options) {
@@ -12,20 +8,41 @@
     model = this;
     if (this.validations != null) {
       _.each(this.validations, function(fieldValidations, fieldName) {
-        var value;
+        var innerErrors, innerFieldName, innerFieldValidations, innerValue, value, _ref, _results;
         value = attrs[fieldName];
-        return _.each(fieldValidations, function(option, validationName) {
-          var error, _ref;
-          error = option === true ? validators[validationName].call(null, value, attrs, model) : validators[validationName].call(null, option, value, attrs, model);
-          if (error) {
-            return ((_ref = errors[fieldName]) != null ? _ref : errors[fieldName] = {})[validationName] = _.isString(error) ? getMessage(error) || error : getMessage(validationName, option);
+        if (_.isObject(value)) {
+          innerErrors = ((_ref = errors[fieldName]) != null ? _ref : errors[fieldName] = {});
+          _results = [];
+          for (innerFieldName in fieldValidations) {
+            innerFieldValidations = fieldValidations[innerFieldName];
+            innerValue = value[innerFieldName];
+            _results.push(applyValidations(innerFieldName, innerFieldValidations, innerValue, attrs, model, innerErrors));
           }
-        });
+          return _results;
+        } else {
+          return applyValidations(fieldName, fieldValidations, value, attrs, model, errors);
+        }
       });
       if (!_.isEmpty(errors)) {
         return errors;
       }
     }
+  };
+
+  applyValidations = function(fieldName, fieldValidations, value, attrs, model, errorsObj) {
+    var error, msg, option, validationName, _ref, _results;
+    _results = [];
+    for (validationName in fieldValidations) {
+      option = fieldValidations[validationName];
+      error = option === true ? validators[validationName].call(null, value, attrs, model) : validators[validationName].call(null, option, value, attrs, model);
+      if (error) {
+        msg = getDisplayMessage(error, validationName, option);
+        _results.push(((_ref = errorsObj[fieldName]) != null ? _ref : errorsObj[fieldName] = {})[validationName] = msg);
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   hasValue = function(value) {
@@ -87,6 +104,14 @@
     url: 'must be a well-formed URL',
     past: 'must be a past date',
     future: 'must be a future date'
+  };
+
+  getDisplayMessage = function(error, validationName, option) {
+    if (_.isString(error)) {
+      return getMessage(error) || error;
+    } else {
+      return getMessage(validationName, option);
+    }
   };
 
   getMessage = function(validationName, option) {

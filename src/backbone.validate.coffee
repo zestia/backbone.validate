@@ -5,20 +5,29 @@ Backbone.Model::validate = (attrs, options) ->
   if @validations?
     _.each @validations, (fieldValidations, fieldName) ->
       value = attrs[fieldName]
-      _.each fieldValidations, (option, validationName) ->
-        error = if option is true
-          validators[validationName].call null, value, attrs, model
-        else
-          validators[validationName].call null, option, value, attrs, model
-        
-        if error
-          (errors[fieldName] ?= {})[validationName] =
-            if _.isString error
-              getMessage(error) or error
-            else
-              getMessage validationName, option
+
+      if _.isObject value
+        innerErrors = (errors[fieldName] ?= {})
+
+        for innerFieldName, innerFieldValidations of fieldValidations
+          innerValue = value[innerFieldName]
+          applyValidations(innerFieldName, innerFieldValidations, innerValue, attrs, model, innerErrors)
+
+      else
+        applyValidations(fieldName, fieldValidations, value, attrs, model, errors)
 
     if not _.isEmpty errors then return errors
+
+applyValidations = (fieldName, fieldValidations, value, attrs, model, errorsObj) ->
+  for validationName, option of fieldValidations
+    error = if option is true
+      validators[validationName].call null, value, attrs, model
+    else
+      validators[validationName].call null, option, value, attrs, model
+    
+    if error
+      msg = getDisplayMessage error, validationName, option
+      (errorsObj[fieldName] ?= {})[validationName] = msg
 
 hasValue = (value) ->
   value? and $.trim(value).length
@@ -75,6 +84,9 @@ messages =
 
   past: 'must be a past date'
   future: 'must be a future date'
+
+getDisplayMessage = (error, validationName, option) ->
+  if _.isString error then getMessage(error) or error else getMessage validationName, option
 
 getMessage = (validationName, option) ->
   msg = messages[validationName]
