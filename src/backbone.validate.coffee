@@ -2,38 +2,41 @@ Backbone.Model::validate = (attrs, options) ->
   errors = {}
   model = @
 
-  validateObject = (fieldName, fieldValidations, value) ->
+  process = (fieldName, fieldValidations, value) ->
+    method = if _.isArray value
+      processArray
+    else if _.isObject value
+      processObject
+    else
+      applyValidations
+    method fieldName, fieldValidations, value
+
+  processArray = (fieldName, fieldValidations, value) ->
+    arrayErrors = {}
+    for currentValue, index in value
+      error = process fieldName, fieldValidations, currentValue
+      if not _.isEmpty error then arrayErrors[index] = error
+    arrayErrors
+
+  processObject = (fieldName, fieldValidations, value) ->
     objectErrors = {}
     for innerFieldName, innerFieldValidations of fieldValidations
-      fieldErrors = applyValidations innerFieldName, innerFieldValidations, value[innerFieldName]
-      if not _.isEmpty fieldErrors then objectErrors[innerFieldName] = fieldErrors
+      error = process innerFieldName, innerFieldValidations, value[innerFieldName]
+      if not _.isEmpty error then objectErrors[innerFieldName] = error
     objectErrors
 
   applyValidations = (fieldName, fieldValidations, value) ->
     fieldErrors = {}
     for validationName, option of fieldValidations
-      error = if option is true
-        validators[validationName].call null, value, attrs, model
-      else
-        validators[validationName].call null, option, value, attrs, model
-      
-      if error
-        msg = getDisplayMessage error, validationName, option
-        fieldErrors[validationName] = msg
-
+      args = (if option is true then [] else [option]).concat([value, attrs, model])
+      error = validators[validationName].apply null, args
+      if error then fieldErrors[validationName] = getDisplayMessage error, validationName, option
     fieldErrors
 
   if @validations?
-    _.each @validations, (fieldValidations, fieldName) ->
-      value = attrs[fieldName]
-
-      fieldErrors = if _.isObject value
-        validateObject fieldName, fieldValidations, value
-      else
-        applyValidations fieldName, fieldValidations, value
-
+    for fieldName, fieldValidations of @validations
+      fieldErrors = process fieldName, fieldValidations, attrs[fieldName]
       if not _.isEmpty fieldErrors then errors[fieldName] = fieldErrors
-
     if not _.isEmpty errors then return errors
 
 hasValue = (value) ->
@@ -101,7 +104,7 @@ getMessage = (validationName, option) ->
   if not option then return msg
 
   if _.isObject(option) and not _.isRegExp(option)
-    _.each option, (value, key) -> msg = msg.replace "{{#{key}}}", value
+    msg = msg.replace "{{#{key}}}", value for key, value of option
     msg
   else
     msg.replace "{{#{validationName}}}", option

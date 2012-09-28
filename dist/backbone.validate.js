@@ -3,43 +3,60 @@
     _this = this;
 
   Backbone.Model.prototype.validate = function(attrs, options) {
-    var applyValidations, errors, model, validateObject;
+    var applyValidations, errors, fieldErrors, fieldName, fieldValidations, model, process, processArray, processObject, _ref;
     errors = {};
     model = this;
-    validateObject = function(fieldName, fieldValidations, value) {
-      var fieldErrors, innerFieldName, innerFieldValidations, objectErrors;
+    process = function(fieldName, fieldValidations, value) {
+      var method;
+      method = _.isArray(value) ? processArray : _.isObject(value) ? processObject : applyValidations;
+      return method(fieldName, fieldValidations, value);
+    };
+    processArray = function(fieldName, fieldValidations, value) {
+      var arrayErrors, currentValue, error, index, _i, _len;
+      arrayErrors = {};
+      for (index = _i = 0, _len = value.length; _i < _len; index = ++_i) {
+        currentValue = value[index];
+        error = process(fieldName, fieldValidations, currentValue);
+        if (!_.isEmpty(error)) {
+          arrayErrors[index] = error;
+        }
+      }
+      return arrayErrors;
+    };
+    processObject = function(fieldName, fieldValidations, value) {
+      var error, innerFieldName, innerFieldValidations, objectErrors;
       objectErrors = {};
       for (innerFieldName in fieldValidations) {
         innerFieldValidations = fieldValidations[innerFieldName];
-        fieldErrors = applyValidations(innerFieldName, innerFieldValidations, value[innerFieldName]);
-        if (!_.isEmpty(fieldErrors)) {
-          objectErrors[innerFieldName] = fieldErrors;
+        error = process(innerFieldName, innerFieldValidations, value[innerFieldName]);
+        if (!_.isEmpty(error)) {
+          objectErrors[innerFieldName] = error;
         }
       }
       return objectErrors;
     };
     applyValidations = function(fieldName, fieldValidations, value) {
-      var error, fieldErrors, msg, option, validationName;
+      var args, error, fieldErrors, option, validationName;
       fieldErrors = {};
       for (validationName in fieldValidations) {
         option = fieldValidations[validationName];
-        error = option === true ? validators[validationName].call(null, value, attrs, model) : validators[validationName].call(null, option, value, attrs, model);
+        args = (option === true ? [] : [option]).concat([value, attrs, model]);
+        error = validators[validationName].apply(null, args);
         if (error) {
-          msg = getDisplayMessage(error, validationName, option);
-          fieldErrors[validationName] = msg;
+          fieldErrors[validationName] = getDisplayMessage(error, validationName, option);
         }
       }
       return fieldErrors;
     };
     if (this.validations != null) {
-      _.each(this.validations, function(fieldValidations, fieldName) {
-        var fieldErrors, value;
-        value = attrs[fieldName];
-        fieldErrors = _.isObject(value) ? validateObject(fieldName, fieldValidations, value) : applyValidations(fieldName, fieldValidations, value);
+      _ref = this.validations;
+      for (fieldName in _ref) {
+        fieldValidations = _ref[fieldName];
+        fieldErrors = process(fieldName, fieldValidations, attrs[fieldName]);
         if (!_.isEmpty(fieldErrors)) {
-          return errors[fieldName] = fieldErrors;
+          errors[fieldName] = fieldErrors;
         }
-      });
+      }
       if (!_.isEmpty(errors)) {
         return errors;
       }
@@ -116,7 +133,7 @@
   };
 
   getMessage = function(validationName, option) {
-    var msg;
+    var key, msg, value;
     msg = messages[validationName];
     if (!msg) {
       return false;
@@ -125,9 +142,10 @@
       return msg;
     }
     if (_.isObject(option) && !_.isRegExp(option)) {
-      _.each(option, function(value, key) {
-        return msg = msg.replace("{{" + key + "}}", value);
-      });
+      for (key in option) {
+        value = option[key];
+        msg = msg.replace("{{" + key + "}}", value);
+      }
       return msg;
     } else {
       return msg.replace("{{" + validationName + "}}", option);
