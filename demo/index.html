@@ -11,28 +11,37 @@
 
     <style type="text/css">
       ul { list-style: none; }
+      label { display: block; }
     </style>
   </head>
   <body>
     <ul>
       <li>
+        <label for="name">Name</label>
         <input id="name" type="text"/>
       </li>
       <li>
-        <input id="email" type="text"/>
+        <label for="age">Age</label>
+        <input id="age" type="text"/>
       </li>
       <li>
-        <input id="age" type="text"/>
+        <label>Email</label>
+        <input id="emailAddress" type="text"/>
+        <input id="emailType" type="text"/>
       </li>
     </ul>
 
+    <label>Phone</label>
     <ul id="phoneNumbers">
       <li>
         <input name="phoneNumber" type="text"/>
-        <input name="type" type="text"/>
+        <input name="phoneType" type="text"/>
+      </li>
+      <li>
+        <input name="phoneNumber" type="text"/>
+        <input name="phoneType" type="text"/>
       </li>
     </ul>
-    <button id="addPhoneNumber">Add Phone Number</button>
 
     <button id="validate">Validate</button>
     
@@ -43,18 +52,23 @@
             name: {
               required: true
             },
-            email: {
-              email: true
-            },
             age: {
               range: [0, 200]
             },
-            phoneNumbers: {
-              phoneNumber: {
+            email: {
+              emailAddress: {
                 required: true,
                 custom: function(v) {
                   if(v === '') return 'BOOM!';
                 }
+              },
+              emailType: {
+                required: true
+              }
+            },
+            phoneNumbers: {
+              phoneNumber: {
+                required: true
               },
               type: {
                 required: true
@@ -66,42 +80,37 @@
         var ExampleView = Backbone.View.extend({
           el: 'body',
           events: {
-            'click #addPhoneNumber': 'addPhoneNumber',
             'click #validate': 'submit'
           },
           initialize: function() {
             this.model = new ExampleModel();
             this.model.on('error', $.proxy(this.error, this));
             this.$name = this.$('#name');
-            this.$email = this.$('#email');
             this.$age = this.$('#age');
+            this.$emailAddress = this.$('#emailAddress');
+            this.$emailType = this.$('#emailType');
             this.$phoneNumbers = this.$('#phoneNumbers');
-          },
-          addPhoneNumber: function(e) {
-            e.preventDefault();
-
-            this.$phoneNumbers.append('<li><input type="text"/></li>');
           },
           submit: function(e) {
             e.preventDefault();
             this.$('.error').remove();
 
-            /*pn = _.map(this.$phoneNumbers.find('input'), function(p) {
-              $p = $(p);
+            pn = _.map(this.$phoneNumbers.find('li'), function(li) {
+              $li = $(li);
               return {
-                phoneNumber: 
+                phoneNumber: $li.find('input[name=phoneNumber]').val() || '',
+                phoneType: $li.find('input[name=phoneType]').val() || ''
               };
             });
-            console.log('pn', pn);*/
 
             this.model.set({
               name: this.$name.val() || '',
-              email: this.$email.val() || '',
               age: this.$age.val() || '',
-              phoneNumbers: {
-                phoneNumber: this.$phoneNumbers.find('input[name=phoneNumber]').val(),
-                type: this.$phoneNumbers.find('input[name=type]').val()
-              }
+              email: {
+                emailAddress: this.$emailAddress.val() || '',
+                emailType: this.$emailType.val() || ''
+              },
+              phoneNumbers: pn
             });
           },
           error: function(model, obj) {

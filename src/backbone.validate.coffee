@@ -2,32 +2,39 @@ Backbone.Model::validate = (attrs, options) ->
   errors = {}
   model = @
 
+  validateObject = (fieldName, fieldValidations, value) ->
+    objectErrors = {}
+    for innerFieldName, innerFieldValidations of fieldValidations
+      fieldErrors = applyValidations innerFieldName, innerFieldValidations, value[innerFieldName]
+      if not _.isEmpty fieldErrors then objectErrors[innerFieldName] = fieldErrors
+    objectErrors
+
+  applyValidations = (fieldName, fieldValidations, value) ->
+    fieldErrors = {}
+    for validationName, option of fieldValidations
+      error = if option is true
+        validators[validationName].call null, value, attrs, model
+      else
+        validators[validationName].call null, option, value, attrs, model
+      
+      if error
+        msg = getDisplayMessage error, validationName, option
+        fieldErrors[validationName] = msg
+
+    fieldErrors
+
   if @validations?
     _.each @validations, (fieldValidations, fieldName) ->
       value = attrs[fieldName]
 
-      if _.isObject value
-        innerErrors = (errors[fieldName] ?= {})
-
-        for innerFieldName, innerFieldValidations of fieldValidations
-          innerValue = value[innerFieldName]
-          applyValidations(innerFieldName, innerFieldValidations, innerValue, attrs, model, innerErrors)
-
+      fieldErrors = if _.isObject value
+        validateObject fieldName, fieldValidations, value
       else
-        applyValidations(fieldName, fieldValidations, value, attrs, model, errors)
+        applyValidations fieldName, fieldValidations, value
+
+      if not _.isEmpty fieldErrors then errors[fieldName] = fieldErrors
 
     if not _.isEmpty errors then return errors
-
-applyValidations = (fieldName, fieldValidations, value, attrs, model, errorsObj) ->
-  for validationName, option of fieldValidations
-    error = if option is true
-      validators[validationName].call null, value, attrs, model
-    else
-      validators[validationName].call null, option, value, attrs, model
-    
-    if error
-      msg = getDisplayMessage error, validationName, option
-      (errorsObj[fieldName] ?= {})[validationName] = msg
 
 hasValue = (value) ->
   value? and $.trim(value).length

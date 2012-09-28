@@ -1,48 +1,49 @@
 (function() {
-  var applyValidations, getDisplayMessage, getMessage, hasValue, messages, patterns, validators,
+  var getDisplayMessage, getMessage, hasValue, messages, patterns, validators,
     _this = this;
 
   Backbone.Model.prototype.validate = function(attrs, options) {
-    var errors, model;
+    var applyValidations, errors, model, validateObject;
     errors = {};
     model = this;
+    validateObject = function(fieldName, fieldValidations, value) {
+      var fieldErrors, innerFieldName, innerFieldValidations, objectErrors;
+      objectErrors = {};
+      for (innerFieldName in fieldValidations) {
+        innerFieldValidations = fieldValidations[innerFieldName];
+        fieldErrors = applyValidations(innerFieldName, innerFieldValidations, value[innerFieldName]);
+        if (!_.isEmpty(fieldErrors)) {
+          objectErrors[innerFieldName] = fieldErrors;
+        }
+      }
+      return objectErrors;
+    };
+    applyValidations = function(fieldName, fieldValidations, value) {
+      var error, fieldErrors, msg, option, validationName;
+      fieldErrors = {};
+      for (validationName in fieldValidations) {
+        option = fieldValidations[validationName];
+        error = option === true ? validators[validationName].call(null, value, attrs, model) : validators[validationName].call(null, option, value, attrs, model);
+        if (error) {
+          msg = getDisplayMessage(error, validationName, option);
+          fieldErrors[validationName] = msg;
+        }
+      }
+      return fieldErrors;
+    };
     if (this.validations != null) {
       _.each(this.validations, function(fieldValidations, fieldName) {
-        var innerErrors, innerFieldName, innerFieldValidations, innerValue, value, _ref, _results;
+        var fieldErrors, value;
         value = attrs[fieldName];
-        if (_.isObject(value)) {
-          innerErrors = ((_ref = errors[fieldName]) != null ? _ref : errors[fieldName] = {});
-          _results = [];
-          for (innerFieldName in fieldValidations) {
-            innerFieldValidations = fieldValidations[innerFieldName];
-            innerValue = value[innerFieldName];
-            _results.push(applyValidations(innerFieldName, innerFieldValidations, innerValue, attrs, model, innerErrors));
-          }
-          return _results;
-        } else {
-          return applyValidations(fieldName, fieldValidations, value, attrs, model, errors);
+        fieldErrors = _.isObject(value) ? validateObject(fieldName, fieldValidations, value) : applyValidations(fieldName, fieldValidations, value);
+        if (!_.isEmpty(fieldErrors)) {
+          return errors[fieldName] = fieldErrors;
         }
       });
       if (!_.isEmpty(errors)) {
         return errors;
       }
     }
-  };
-
-  applyValidations = function(fieldName, fieldValidations, value, attrs, model, errorsObj) {
-    var error, msg, option, validationName, _ref, _results;
-    _results = [];
-    for (validationName in fieldValidations) {
-      option = fieldValidations[validationName];
-      error = option === true ? validators[validationName].call(null, value, attrs, model) : validators[validationName].call(null, option, value, attrs, model);
-      if (error) {
-        msg = getDisplayMessage(error, validationName, option);
-        _results.push(((_ref = errorsObj[fieldName]) != null ? _ref : errorsObj[fieldName] = {})[validationName] = msg);
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
   };
 
   hasValue = function(value) {
