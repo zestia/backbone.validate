@@ -1,4 +1,4 @@
-/*! Backbone Validate - v0.1.0 - 2012-10-02
+/*! Backbone Validate - v0.1.1 - 2012-10-02
 * https://github.com/zestia/backbone.validate
 * Copyright (c) 2012 Ross Grayton; Licensed MIT */
 
