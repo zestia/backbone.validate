@@ -60,26 +60,29 @@ describe 'Validating objects', ->
 
 describe 'Validating arrays', ->
 
-  it 'should validate attributes that are arrays', ->
+  it 'should validate attributes that are arrays, returning an array of errors', ->
     attrs = { email: ['', ''] }
     validations = { email: { required: true } }
     errors = new BackboneValidate(attrs, validations).validate()
+    expect(_.isArray(errors.email)).toBe(true)
     expect(errors.email[0].required).toBe('is required')
     expect(errors.email[1].required).toBe('is required')
 
-  it 'should only return the index of elements that fail validation', ->
+  it 'errors should be in the correct index of the returned array', ->
     attrs = { email: ['one', ''] }
     validations = { email: { required: true } }
     errors = new BackboneValidate(attrs, validations).validate()
+    expect(errors.email[0]).toBeUndefined()
     expect(errors.email[1].required).toBe('is required')
 
 
 describe 'Validating arrays of objects', ->
 
-  it 'should validate attributes that are arrays', ->
+  it 'should validate attributes that are arrays of objects, returning an array of errors', ->
     attrs = { email: [{ address: '', type: '' }, { address: '', type: '' }] }
     validations = { email: { address: { required: true }, type: { required: true } } }
     errors = new BackboneValidate(attrs, validations).validate()
+    expect(_.isArray(errors.email)).toBe(true)
     expect(errors.email[0].address.required).toBe('is required')
     expect(errors.email[0].type.required).toBe('is required')
     expect(errors.email[1].address.required).toBe('is required')

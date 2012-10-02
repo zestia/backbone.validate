@@ -1,11 +1,10 @@
-/*! Backbone Validate - v0.1.1 - 2012-10-02
+/*! Backbone Validate - v0.1.4 - 2012-10-02
 * https://github.com/zestia/backbone.validate
 * Copyright (c) 2012 Ross Grayton; Licensed MIT */
 
 (function() {
-  var BackboneValidate;
 
-  BackboneValidate = (function() {
+  this.BackboneValidate = (function() {
     var _this = this;
 
     function BackboneValidate(attrs, validations, model) {
@@ -40,7 +39,7 @@
 
     BackboneValidate.prototype.processArray = function(fieldName, fieldValidations, value) {
       var arrayErrors, currentValue, error, index, _i, _len;
-      arrayErrors = {};
+      arrayErrors = [];
       for (index = _i = 0, _len = value.length; _i < _len; index = ++_i) {
         currentValue = value[index];
         error = this.process(fieldName, fieldValidations, currentValue);
@@ -170,8 +169,6 @@
     Backbone.Model.prototype.validate = function(attrs, options) {
       return new BackboneValidate(attrs, this.validations, this).validate();
     };
-  } else {
-    window.BackboneValidate = BackboneValidate;
   }
 
 }).call(this);

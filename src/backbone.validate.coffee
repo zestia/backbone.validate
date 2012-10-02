@@ -1,4 +1,4 @@
-class BackboneValidate
+class @BackboneValidate
   constructor: (@attrs, @validations, @model) ->
     @errors = {}
 
@@ -19,7 +19,7 @@ class BackboneValidate
     method.call @, fieldName, fieldValidations, value
 
   processArray: (fieldName, fieldValidations, value) ->
-    arrayErrors = {}
+    arrayErrors = []
     for currentValue, index in value
       error = @process fieldName, fieldValidations, currentValue
       if not _.isEmpty error then arrayErrors[index] = error
@@ -113,5 +113,3 @@ class BackboneValidate
 if Backbone?
   Backbone.Model::validate = (attrs, options) ->
     new BackboneValidate(attrs, @validations, @).validate()
-else
-  window.BackboneValidate = BackboneValidate

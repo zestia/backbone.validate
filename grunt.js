@@ -82,5 +82,6 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', 'clean coffee:dev concat min');
   grunt.registerTask('dev', 'watch:dev');
-  grunt.registerTask('test', 'watch:test');
+  grunt.registerTask('test', 'clean coffee:test jasmine');
+  grunt.registerTask('watch-test', 'watch:test');
 };
