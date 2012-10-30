@@ -20,7 +20,7 @@ class Person extends Backbone.Model
       required: true
       minLength: 3
     emailAddress:
-      email: true
+      pattern: 'email'
     age:
       range: [0, 200]
 ```

@@ -1,4 +1,4 @@
-/*! Backbone Validate - v0.1.4 - 2012-10-02
+/*! Backbone Validate - v0.1.4 - 2012-10-29
 * https://github.com/zestia/backbone.validate
 * Copyright (c) 2012 Ross Grayton; Licensed MIT */
 
@@ -98,15 +98,12 @@
         return this.hasValue(value) && !((limits[0] <= value && value <= limits[1]));
       },
       pattern: function(expr, value, attrs) {
+        expr = BackboneValidate.patterns[expr] || expr;
         if (this.hasValue(value) && !expr.test(value)) {
           return true;
+        } else {
+          return false;
         }
-      },
-      email: function(value, attrs) {
-        return this.pattern(BackboneValidate.patterns.email, value, attrs);
-      },
-      url: function(value, attrs) {
-        return this.pattern(BackboneValidate.patterns.url, value, attrs);
       },
       custom: function(fn, value, attrs, model) {
         return fn.call(model, value, attrs);

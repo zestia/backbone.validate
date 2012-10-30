@@ -52,3 +52,15 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.custom(-> true)).toBe(true)
       expect(BackboneValidate.validators.custom(-> false)).toBe(false)
       expect(BackboneValidate.validators.custom(->)).toBeUndefined
+
+
+  describe 'the "email" validator', ->
+
+    it 'should be exposed', ->
+      expect(BackboneValidate.validators.pattern).toBeDefined()
+
+    it 'should return false when a valid email address is provided', ->
+      expect(BackboneValidate.validators.pattern('email', 'test@example.net')).toBe(false)
+
+    it 'should return true when an invalid email address is provided', ->
+      expect(BackboneValidate.validators.pattern('email', 'abcd')).toBe(true)

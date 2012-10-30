@@ -57,13 +57,14 @@ class @BackboneValidate
       @hasValue(value) and not (limits[0] <= value <= limits[1])
 
     pattern: (expr, value, attrs) ->
-      if @hasValue(value) and not expr.test(value) then true
+      expr = BackboneValidate.patterns[expr] or expr
+      if @hasValue(value) and not expr.test(value) then true else false
 
-    email: (value, attrs) ->
-      @pattern BackboneValidate.patterns.email, value, attrs
+    #email: (value, attrs) ->
+    #  @pattern BackboneValidate.patterns.email, value, attrs
 
-    url: (value, attrs) ->
-      @pattern BackboneValidate.patterns.url, value, attrs
+    #url: (value, attrs) ->
+    #  @pattern BackboneValidate.patterns.url, value, attrs
 
     custom: (fn, value, attrs, model) =>
       fn.call model, value, attrs
