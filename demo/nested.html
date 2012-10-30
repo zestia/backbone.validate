@@ -20,15 +20,6 @@
         <label for="name">Name</label>
         <input id="name" type="text"/>
       </li>
-      <li>
-        <label for="age">Age</label>
-        <input id="age" type="text"/>
-      </li>
-      <li>
-        <label>Email</label>
-        <input id="emailAddress" type="text"/>
-        <input id="emailType" type="text"/>
-      </li>
     </ul>
 
     <label>Phone</label>
@@ -52,23 +43,10 @@
             name: {
               required: true
             },
-            age: {
-              range: [0, 200]
-            },
-            'email.emailAddress': {
-              required: true,
-              custom: function(v) {
-                if(v === '') return 'BOOM!';
-              },
-              email: true
-            },
-            'email.emailType': {
+            'contacts.phoneNumbers[].phoneNumber': {
               required: true
             },
-            'phoneNumbers[].phoneNumber': {
-              required: true
-            },
-            'phoneNumbers[].phoneType': {
+            'contacts.phoneNumbers[].phoneType': {
               required: true
             }
           }
@@ -83,9 +61,6 @@
             this.model = new ExampleModel();
             this.model.on('error', $.proxy(this.error, this));
             this.$name = this.$('#name');
-            this.$age = this.$('#age');
-            this.$emailAddress = this.$('#emailAddress');
-            this.$emailType = this.$('#emailType');
             this.$phoneNumbers = this.$('#phoneNumbers');
           },
           submit: function(e) {
@@ -100,15 +75,13 @@
               };
             });
 
-            this.model.set({
+            var obj = {
               name: this.$name.val() || '',
-              age: this.$age.val() || '',
-              email: {
-                emailAddress: this.$emailAddress.val() || '',
-                emailType: this.$emailType.val() || ''
-              },
               phoneNumbers: pn
-            });
+            };
+            console.log('obj', obj);
+
+            this.model.set(obj);
           },
           error: function(model, obj) {
             console.log('error!', model, obj);

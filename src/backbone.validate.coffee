@@ -2,37 +2,43 @@ class @BackboneValidate
   constructor: (@attrs, @validations, @model) ->
     @errors = {}
 
-  validate: ->
+  validate: =>
     if @validations?
       for fieldName, fieldValidations of @validations
-        fieldErrors = @process fieldName, fieldValidations, @attrs[fieldName]
-        if not _.isEmpty fieldErrors then @errors[fieldName] = fieldErrors
+        fieldDetails = @parseName fieldName
+        
+        if _.isArray(fieldDetails.value)
+          for value, index in fieldDetails.value
+            fieldErrors = @applyValidations value, fieldValidations
+            errorsKey = fieldDetails.fullName.replace /\[\]/, "[#{index}]"
+            if not _.isEmpty fieldErrors then @errors[errorsKey] = fieldErrors
+        else
+          fieldErrors = @applyValidations fieldDetails.value, fieldValidations
+          if not _.isEmpty fieldErrors then @errors[fieldDetails.fullName] = fieldErrors
+
       if not _.isEmpty @errors then return @errors
 
-  process: (fieldName, fieldValidations, value) ->
-    method = if _.isArray value
-      @processArray
-    else if _.isObject value
-      @processObject
-    else
-      @applyValidations
-    method.call @, fieldName, fieldValidations, value
+  parseName: (name) ->
+    if /(\.?\w+\[\]){2,}/.test(name) then throw new Error('Backbone.Validate: Nested arrays not supported')
+    if /\[\](\.\w+){2,}/.test(name) then throw new Error('Backbone.Validate: Nesting within an array not supported')
 
-  processArray: (fieldName, fieldValidations, value) ->
-    arrayErrors = []
-    for currentValue, index in value
-      error = @process fieldName, fieldValidations, currentValue
-      if not _.isEmpty error then arrayErrors[index] = error
-    arrayErrors
+    fullName = name
+    tokens = name.split('.')
+    value = null
 
-  processObject: (fieldName, fieldValidations, value) ->
-    objectErrors = {}
-    for innerFieldName, innerFieldValidations of fieldValidations
-      error = @process innerFieldName, innerFieldValidations, value[innerFieldName]
-      if not _.isEmpty error then objectErrors[innerFieldName] = error
-    objectErrors
+    for t in tokens
+      name = t.replace /\[\]$/, ''
 
-  applyValidations: (fieldName, fieldValidations, value) ->
+      value = if not value?
+        @attrs[name]
+      else if _.isArray(value)
+        _.pluck value, name
+      else
+        value[name]
+
+    { name: name, fullName: fullName, value: value }
+
+  applyValidations: (value, fieldValidations) ->
     fieldErrors = {}
     for validationName, option of fieldValidations
       args = (if option is true then [] else [option]).concat([value, @attrs, @model])
@@ -57,14 +63,13 @@ class @BackboneValidate
       @hasValue(value) and not (limits[0] <= value <= limits[1])
 
     pattern: (expr, value, attrs) ->
-      expr = BackboneValidate.patterns[expr] or expr
       if @hasValue(value) and not expr.test(value) then true else false
 
-    #email: (value, attrs) ->
-    #  @pattern BackboneValidate.patterns.email, value, attrs
+    email: (value, attrs) ->
+      @pattern BackboneValidate.patterns.email, value, attrs
 
-    #url: (value, attrs) ->
-    #  @pattern BackboneValidate.patterns.url, value, attrs
+    url: (value, attrs) ->
+      @pattern BackboneValidate.patterns.url, value, attrs
 
     custom: (fn, value, attrs, model) =>
       fn.call model, value, attrs

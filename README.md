@@ -19,10 +19,10 @@ class Person extends Backbone.Model
     name:
       required: true
       minLength: 3
-    emailAddress:
-      pattern: 'email'
     age:
       range: [0, 200]
+    'email[].emailAddress':
+      email: true
 ```
 
 ## Release History
