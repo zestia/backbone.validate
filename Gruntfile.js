@@ -75,8 +75,8 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default',    [ 'clean', 'coffee:dev', 'concat:dist', 'uglify:dist' ]);
-  grunt.registerTask('dev',        [ 'watch:dev' ]);
-  grunt.registerTask('test',       [ 'clean', 'coffee:test', 'jasmine:test' ]);
-  grunt.registerTask('watch-test', [ 'watch:test' ]);
+  grunt.registerTask('default', ['clean', 'coffee:dev', 'concat:dist', 'uglify:dist']);
+  grunt.registerTask('dev', ['watch:dev']);
+  grunt.registerTask('test', ['clean', 'coffee:test', 'jasmine:test']);
+  grunt.registerTask('watch-test', ['watch:test']);
 };
