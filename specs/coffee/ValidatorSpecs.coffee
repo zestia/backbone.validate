@@ -1,11 +1,11 @@
 describe 'Default validators', ->
-  
+
   it 'should be exposed', ->
     expect(BackboneValidate.validators).toBeDefined()
 
 
   describe 'the "required" validator', ->
-    
+
     it 'should be exposed', ->
       expect(BackboneValidate.validators.required).toBeDefined()
 
@@ -37,7 +37,7 @@ describe 'Default validators', ->
 
 
   describe 'the "custom" validator', ->
-    
+
     it 'should be exposed', ->
       expect(BackboneValidate.validators.custom).toBeDefined()
 
@@ -64,3 +64,38 @@ describe 'Default validators', ->
 
     it 'should return true when an invalid email address is provided', ->
       expect(BackboneValidate.validators.email('abcd')).toBe(true)
+
+
+  describe 'the "maxLength" validator', ->
+
+    it 'should be exposed', ->
+      expect(BackboneValidate.validators.maxLength).toBeDefined()
+
+    it 'should return false when a value not longer than max length provided', ->
+      expect(BackboneValidate.validators.maxLength(6, 'Hello')).toBe(false)
+
+    it 'should return true when a value longer than max length provided', ->
+      expect(BackboneValidate.validators.maxLength(6, 'Hello World')).toBe(true)
+
+
+  describe 'the "minLength" validator', ->
+
+    it 'should be exposed', ->
+      expect(BackboneValidate.validators.minLength).toBeDefined()
+
+    it 'should return false when a value is longer than min length provided', ->
+      expect(BackboneValidate.validators.minLength(4, 'Hello')).toBe(false)
+
+    it 'should return true when a value shorter than min length provided', ->
+      expect(BackboneValidate.validators.minLength(16, 'Hello World')).toBe(true)
+
+
+  describe 'the "lengthRange" validator', ->
+    it 'should be exposed', ->
+      expect(BackboneValidate.validators.lengthRange).toBeDefined()
+
+    it 'should return false when a value length is inside the length range provided', ->
+      expect(BackboneValidate.validators.lengthRange(4, 10, 'Hello')).toBe(false)
+
+    it 'should return true when a value length is outside of the length range provided', ->
+      expect(BackboneValidate.validators.lengthRange(1, 5, 'Hello World')).toBe(true)

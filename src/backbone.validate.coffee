@@ -6,7 +6,7 @@ class @BackboneValidate
     if @validations?
       for fieldName, fieldValidations of @validations
         fieldDetails = @parseName fieldName
-        
+
         if _.isArray(fieldDetails.value)
           for value, index in fieldDetails.value
             fieldErrors = @applyValidations value, fieldValidations
@@ -71,13 +71,19 @@ class @BackboneValidate
     url: (value, attrs) ->
       @pattern BackboneValidate.patterns.url, value, attrs
 
-    custom: (fn, value, attrs, model) =>
+    custom: (fn, value, attrs, model) ->
       fn.call model, value, attrs
 
+    maxLength: (maxLength, value, attrs) ->
+      value.toString().length > maxLength
+
+    minLength: (minLength, value, attrs) ->
+      value.toString().length < minLength
+
+    lengthRange: (min, max, value, attrs) ->
+      min > value.toString().length or max < value.toString().length
+
     # TODO:
-    #   minlength
-    #   maxlength
-    #   lengthRange
     #   number
     #   in
 
