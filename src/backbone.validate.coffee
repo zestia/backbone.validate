@@ -80,8 +80,8 @@ class @BackboneValidate
     minLength: (minLength, value, attrs) ->
       value.toString().length < minLength
 
-    lengthRange: (min, max, value, attrs) ->
-      min > value.toString().length or max < value.toString().length
+    lengthRange: (range, value, attrs) ->
+      range[0] > value.toString().length or range[1] < value.toString().length
 
     # TODO:
     #   number

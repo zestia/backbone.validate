@@ -95,7 +95,7 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.lengthRange).toBeDefined()
 
     it 'should return false when a value length is inside the length range provided', ->
-      expect(BackboneValidate.validators.lengthRange(4, 10, 'Hello')).toBe(false)
+      expect(BackboneValidate.validators.lengthRange([4, 10], 'Hello')).toBe(false)
 
     it 'should return true when a value length is outside of the length range provided', ->
-      expect(BackboneValidate.validators.lengthRange(1, 5, 'Hello World')).toBe(true)
+      expect(BackboneValidate.validators.lengthRange([1, 5], 'Hello World')).toBe(true)

@@ -119,8 +119,8 @@
       minLength: function(minLength, value, attrs) {
         return value.toString().length < minLength;
       },
-      lengthRange: function(min, max, value, attrs) {
-        return min > value.toString().length || max < value.toString().length;
+      lengthRange: function(range, value, attrs) {
+        return range[0] > value.toString().length || range[1] < value.toString().length;
       }
     };
 
