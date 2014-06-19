@@ -1,8 +1,17 @@
 module.exports = function(grunt) {
 
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-clear');
+
   // Project configuration
   grunt.initConfig({
-    pkg: '<json:backbone.validate.json>',
+    pkg: grunt.file.readJSON('package.json'),
+
     meta: {
       banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
@@ -10,7 +19,9 @@ module.exports = function(grunt) {
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
     },
+
     clean: ["dist", "specs/js", "specs/junit"],
+
     coffee: {
       dev: {
         files: {
@@ -24,25 +35,33 @@ module.exports = function(grunt) {
         }
       }
     },
+
     concat: {
       dist: {
         src: ['<banner:meta.banner>', 'dist/<%= pkg.name %>.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
-    min: {
+
+    uglify: {
       dist: {
-        src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
+        src: ['<banner:meta.banner>', '<%= concat.dist.dest %>'],
         dest: 'dist/<%= pkg.name %>.min.js'
       }
     },
+
     jasmine: {
-      src: ['lib/jquery.min.js', 'lib/underscore.min.js', 'dist/backbone.validate.js'],
-      specs: 'specs/js/*.js',
-      junit: {
-        output: 'specs/junit/'
+      test: {
+        src: ['lib/jquery.min.js', 'lib/underscore.min.js', 'dist/backbone.validate.js'],
+        options: {
+          specs: 'specs/js/*.js',
+          junit: {
+            output: 'specs/junit/'
+          }
+        }
       }
     },
+
     watch: {
       dev: {
         files: 'src/backbone.validate.coffee',
@@ -52,36 +71,12 @@ module.exports = function(grunt) {
         files: ['src/backbone.validate.coffee', 'specs/coffee/*.coffee'],
         tasks: 'clean clear coffee:test jasmine'
       }
-    },
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        browser: true
-      },
-      globals: {
-        jQuery: true
-      }
-    },
-    uglify: {}
+    }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-jasmine-runner');
-  grunt.loadNpmTasks('grunt-clear');
-
   // Default task.
-  grunt.registerTask('default', 'clean coffee:dev concat min');
-  grunt.registerTask('dev', 'watch:dev');
-  grunt.registerTask('test', 'clean coffee:test jasmine');
-  grunt.registerTask('watch-test', 'watch:test');
+  grunt.registerTask('default',    [ 'clean', 'coffee:dev', 'concat:dist', 'uglify:dist' ]);
+  grunt.registerTask('dev',        [ 'watch:dev' ]);
+  grunt.registerTask('test',       [ 'clean', 'coffee:test', 'jasmine:test' ]);
+  grunt.registerTask('watch-test', [ 'watch:test' ]);
 };
