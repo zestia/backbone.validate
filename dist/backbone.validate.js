@@ -1,19 +1,12 @@
-/*! Backbone Validate - v0.1.4 - 2012-10-30
-* https://github.com/zestia/backbone.validate
-* Copyright (c) 2012 Ross Grayton; Licensed MIT */
-
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.BackboneValidate = (function() {
-    var _this = this;
-
     function BackboneValidate(attrs, validations, model) {
       this.attrs = attrs;
       this.validations = validations;
       this.model = model;
       this.validate = __bind(this.validate, this);
-
       this.errors = {};
     }
 
@@ -61,7 +54,7 @@
       for (_i = 0, _len = tokens.length; _i < _len; _i++) {
         t = tokens[_i];
         name = t.replace(/\[\]$/, '');
-        value = !(value != null) ? this.attrs[name] : _.isArray(value) ? _.pluck(value, name) : value[name];
+        value = value == null ? this.attrs[name] : _.isArray(value) ? _.pluck(value, name) : value[name];
       }
       return {
         name: name,
@@ -119,6 +112,15 @@
       },
       custom: function(fn, value, attrs, model) {
         return fn.call(model, value, attrs);
+      },
+      maxLength: function(maxLength, value, attrs) {
+        return value.toString().length > maxLength;
+      },
+      minLength: function(minLength, value, attrs) {
+        return value.toString().length < minLength;
+      },
+      lengthRange: function(min, max, value, attrs) {
+        return min > value.toString().length || max < value.toString().length;
       }
     };
 
@@ -172,7 +174,7 @@
 
     return BackboneValidate;
 
-  }).call(this);
+  })();
 
   if (typeof Backbone !== "undefined" && Backbone !== null) {
     Backbone.Model.prototype.validate = function(attrs, options) {
