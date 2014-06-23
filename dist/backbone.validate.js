@@ -114,12 +114,21 @@
         return fn.call(model, value, attrs);
       },
       maxLength: function(maxLength, value, attrs) {
+        if (value == null) {
+          return true;
+        }
         return value.toString().length > maxLength;
       },
       minLength: function(minLength, value, attrs) {
+        if (value == null) {
+          return true;
+        }
         return value.toString().length < minLength;
       },
       lengthRange: function(range, value, attrs) {
+        if (value == null) {
+          return true;
+        }
         return range[0] > value.toString().length || range[1] < value.toString().length;
       }
     };

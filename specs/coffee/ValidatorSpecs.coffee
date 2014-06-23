@@ -77,6 +77,9 @@ describe 'Default validators', ->
     it 'should return true when a value longer than max length provided', ->
       expect(BackboneValidate.validators.maxLength(6, 'Hello World')).toBe(true)
 
+    it 'should return true when an undefined or null value is provided', ->
+      expect(BackboneValidate.validators.maxLength(6, undefined)).toBe(true)
+      expect(BackboneValidate.validators.maxLength(6, null)).toBe(true)
 
   describe 'the "minLength" validator', ->
 
@@ -89,6 +92,9 @@ describe 'Default validators', ->
     it 'should return true when a value shorter than min length provided', ->
       expect(BackboneValidate.validators.minLength(16, 'Hello World')).toBe(true)
 
+    it 'should return true when an undefined or null value is provided', ->
+      expect(BackboneValidate.validators.minLength(6, undefined)).toBe(true)
+      expect(BackboneValidate.validators.minLength(6, null)).toBe(true)
 
   describe 'the "lengthRange" validator', ->
     it 'should be exposed', ->
@@ -99,3 +105,7 @@ describe 'Default validators', ->
 
     it 'should return true when a value length is outside of the length range provided', ->
       expect(BackboneValidate.validators.lengthRange([1, 5], 'Hello World')).toBe(true)
+
+    it 'should return true when an undefined or null value is provided', ->
+      expect(BackboneValidate.validators.lengthRange([1, 5], undefined)).toBe(true)
+      expect(BackboneValidate.validators.lengthRange([1, 5], null)).toBe(true)
