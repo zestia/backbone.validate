@@ -114,13 +114,13 @@
         return fn.call(model, value, attrs);
       },
       maxLength: function(maxLength, value, attrs) {
-        if (value == null) {
+        if (typeof value === 'undefined' || value === null) {
           return true;
         }
         return value.toString().length > maxLength;
       },
       minLength: function(minLength, value, attrs) {
-        if (value == null) {
+        if (typeof value === 'undefined' || value === null) {
           return true;
         }
         return value.toString().length < minLength;
