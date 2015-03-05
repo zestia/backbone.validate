@@ -75,15 +75,15 @@ class @BackboneValidate
       fn.call model, value, attrs
 
     maxLength: (maxLength, value, attrs) ->
-      return true if typeof value is 'undefined' or value is null
+      return false unless @hasValue(value)
       value.toString().length > maxLength
 
     minLength: (minLength, value, attrs) ->
-      return true if typeof value is 'undefined' or value is null
+      return false unless @hasValue(value)
       value.toString().length < minLength
 
     lengthRange: (range, value, attrs) ->
-      return true unless value?
+      return true unless @hasValue(value)
       range[0] > value.toString().length or range[1] < value.toString().length
 
     # TODO:

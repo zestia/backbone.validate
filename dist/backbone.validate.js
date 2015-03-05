@@ -1,26 +1,26 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.BackboneValidate = (function() {
-    function BackboneValidate(attrs, validations, model) {
-      this.attrs = attrs;
+    function BackboneValidate(attrs1, validations, model1) {
+      this.attrs = attrs1;
       this.validations = validations;
-      this.model = model;
-      this.validate = __bind(this.validate, this);
+      this.model = model1;
+      this.validate = bind(this.validate, this);
       this.errors = {};
     }
 
     BackboneValidate.prototype.validate = function() {
-      var errorsKey, fieldDetails, fieldErrors, fieldName, fieldValidations, index, value, _i, _len, _ref, _ref1;
+      var errorsKey, fieldDetails, fieldErrors, fieldName, fieldValidations, i, index, len, ref, ref1, value;
       if (this.validations != null) {
-        _ref = this.validations;
-        for (fieldName in _ref) {
-          fieldValidations = _ref[fieldName];
+        ref = this.validations;
+        for (fieldName in ref) {
+          fieldValidations = ref[fieldName];
           fieldDetails = this.parseName(fieldName);
           if (_.isArray(fieldDetails.value)) {
-            _ref1 = fieldDetails.value;
-            for (index = _i = 0, _len = _ref1.length; _i < _len; index = ++_i) {
-              value = _ref1[index];
+            ref1 = fieldDetails.value;
+            for (index = i = 0, len = ref1.length; i < len; index = ++i) {
+              value = ref1[index];
               fieldErrors = this.applyValidations(value, fieldValidations);
               errorsKey = fieldDetails.fullName.replace(/\[\]/, "[" + index + "]");
               if (!_.isEmpty(fieldErrors)) {
@@ -41,7 +41,7 @@
     };
 
     BackboneValidate.prototype.parseName = function(name) {
-      var fullName, t, tokens, value, _i, _len;
+      var fullName, i, len, t, tokens, value;
       if (/(\.?\w+\[\]){2,}/.test(name)) {
         throw new Error('Backbone.Validate: Nested arrays not supported');
       }
@@ -51,8 +51,8 @@
       fullName = name;
       tokens = name.split('.');
       value = null;
-      for (_i = 0, _len = tokens.length; _i < _len; _i++) {
-        t = tokens[_i];
+      for (i = 0, len = tokens.length; i < len; i++) {
+        t = tokens[i];
         name = t.replace(/\[\]$/, '');
         value = value == null ? this.attrs[name] : _.isArray(value) ? _.pluck(value, name) : value[name];
       }
@@ -114,19 +114,19 @@
         return fn.call(model, value, attrs);
       },
       maxLength: function(maxLength, value, attrs) {
-        if (typeof value === 'undefined' || value === null) {
-          return true;
+        if (!this.hasValue(value)) {
+          return false;
         }
         return value.toString().length > maxLength;
       },
       minLength: function(minLength, value, attrs) {
-        if (typeof value === 'undefined' || value === null) {
-          return true;
+        if (!this.hasValue(value)) {
+          return false;
         }
         return value.toString().length < minLength;
       },
       lengthRange: function(range, value, attrs) {
-        if (value == null) {
+        if (!this.hasValue(value)) {
           return true;
         }
         return range[0] > value.toString().length || range[1] < value.toString().length;
