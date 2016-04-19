@@ -32,7 +32,7 @@ class @BackboneValidate
       value = if not value?
         @attrs[name]
       else if _.isArray(value)
-        _.pluck value, name
+        _.map value, name
       else
         value[name]
 

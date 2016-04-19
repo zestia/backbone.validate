@@ -52,7 +52,7 @@ module.exports = function(grunt) {
 
     jasmine: {
       test: {
-        src: ['lib/jquery.min.js', 'lib/underscore.min.js', 'dist/backbone.validate.js'],
+        src: ['lib/jquery.min.js', 'lib/lodash.min.js', 'dist/backbone.validate.js'],
         options: {
           specs: 'specs/js/*.js',
           junit: {

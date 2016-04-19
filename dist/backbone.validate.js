@@ -54,7 +54,7 @@
       for (i = 0, len = tokens.length; i < len; i++) {
         t = tokens[i];
         name = t.replace(/\[\]$/, '');
-        value = value == null ? this.attrs[name] : _.isArray(value) ? _.pluck(value, name) : value[name];
+        value = value == null ? this.attrs[name] : _.isArray(value) ? _.map(value, name) : value[name];
       }
       return {
         name: name,
