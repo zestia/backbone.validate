@@ -1,11 +1,8 @@
 describe 'Default validators', ->
-
   it 'should be exposed', ->
     expect(BackboneValidate.validators).toBeDefined()
 
-
   describe 'the "required" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.required).toBeDefined()
 
@@ -17,9 +14,7 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.required(null)).toBe(true)
       expect(BackboneValidate.validators.required('')).toBe(true)
 
-
   describe 'the "range" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.range).toBeDefined()
 
@@ -35,9 +30,7 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.range([1, 10], 0)).toBe(true)
       expect(BackboneValidate.validators.range([1, 10], 11)).toBe(true)
 
-
   describe 'the "custom" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.custom).toBeDefined()
 
@@ -53,9 +46,7 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.custom(-> false)).toBe(false)
       expect(BackboneValidate.validators.custom(->)).toBeUndefined
 
-
   describe 'the "email" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.email).toBeDefined()
 
@@ -65,9 +56,10 @@ describe 'Default validators', ->
     it 'should return true when an invalid email address is provided', ->
       expect(BackboneValidate.validators.email('abcd')).toBe(true)
 
+    it 'should return true when an accented character is in the email address', ->
+      expect(BackboneValidate.validators.email('fooé@gmail.com')).toBe(true)
 
   describe 'the "maxLength" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.maxLength).toBeDefined()
 
@@ -82,7 +74,6 @@ describe 'Default validators', ->
       expect(BackboneValidate.validators.maxLength(6, null)).toBe(false)
 
   describe 'the "minLength" validator', ->
-
     it 'should be exposed', ->
       expect(BackboneValidate.validators.minLength).toBeDefined()
 
