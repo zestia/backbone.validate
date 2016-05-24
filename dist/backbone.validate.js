@@ -57,7 +57,7 @@
         name = t.replace(/\[(\d+)?\]$/, '');
         value = value == null ? this.attrs[name] : _.isArray(value) ? _.map(value, name) : value[name];
       }
-      if (index != null) {
+      if ((index != null) && index.length > 0) {
         value = value[index];
       }
       return {

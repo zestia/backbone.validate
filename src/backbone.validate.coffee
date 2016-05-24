@@ -30,7 +30,6 @@ class @BackboneValidate
     for t in tokens
       name = t.replace /\[(\d+)?\]$/, ''
 
-
       value = if not value?
         @attrs[name]
       else if _.isArray(value)
@@ -38,7 +37,7 @@ class @BackboneValidate
       else
         value[name]
 
-    value = value[index] if index?
+    value = value[index] if index? and index.length > 0
 
     { name: name, fullName: fullName, value: value }
 
