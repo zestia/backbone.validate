@@ -23,11 +23,13 @@ class @BackboneValidate
     if /\[\](\.\w+){2,}/.test(name) then throw new Error('Backbone.Validate: Nesting within an array not supported')
 
     fullName = name
+    index = /\[(\d*)\]/.exec(fullName)?[1]
     tokens = name.split('.')
     value = null
 
     for t in tokens
-      name = t.replace /\[\]$/, ''
+      name = t.replace /\[(\d+)?\]$/, ''
+
 
       value = if not value?
         @attrs[name]
@@ -35,6 +37,8 @@ class @BackboneValidate
         _.map value, name
       else
         value[name]
+
+    value = value[index] if index?
 
     { name: name, fullName: fullName, value: value }
 

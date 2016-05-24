@@ -41,7 +41,7 @@
     };
 
     BackboneValidate.prototype.parseName = function(name) {
-      var fullName, i, len, t, tokens, value;
+      var fullName, i, index, len, ref, t, tokens, value;
       if (/(\.?\w+\[\]){2,}/.test(name)) {
         throw new Error('Backbone.Validate: Nested arrays not supported');
       }
@@ -49,12 +49,16 @@
         throw new Error('Backbone.Validate: Nesting within an array not supported');
       }
       fullName = name;
+      index = (ref = /\[(\d*)\]/.exec(fullName)) != null ? ref[1] : void 0;
       tokens = name.split('.');
       value = null;
       for (i = 0, len = tokens.length; i < len; i++) {
         t = tokens[i];
-        name = t.replace(/\[\]$/, '');
+        name = t.replace(/\[(\d+)?\]$/, '');
         value = value == null ? this.attrs[name] : _.isArray(value) ? _.map(value, name) : value[name];
+      }
+      if (index != null) {
+        value = value[index];
       }
       return {
         name: name,
