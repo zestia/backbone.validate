@@ -59,6 +59,9 @@ describe 'Default validators', ->
     it 'should return true when an accented character is in the email address', ->
       expect(BackboneValidate.validators.email('fooé@gmail.com')).toBe(true)
 
+    it 'should return true when an email begins with mailto:', ->
+      expect(BackboneValidate.validators.email('mailto:someemail@google.com')).toBe(true)
+
   describe 'the "maxLength" validator', ->
     it 'should be exposed', ->
       expect(BackboneValidate.validators.maxLength).toBeDefined()

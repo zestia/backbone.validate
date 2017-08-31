@@ -69,6 +69,9 @@ class @BackboneValidate
       if @hasValue(value) and not expr.test(value) then true else false
 
     email: (value, attrs) ->
+      if /^mailto:/i.test(value)
+        return true
+
       @pattern BackboneValidate.patterns.email, value, attrs
 
     url: (value, attrs) ->

@@ -109,6 +109,9 @@
         }
       },
       email: function(value, attrs) {
+        if (/^mailto:/i.test(value)) {
+          return true;
+        }
         return this.pattern(BackboneValidate.patterns.email, value, attrs);
       },
       url: function(value, attrs) {
