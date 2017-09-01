@@ -72,6 +72,9 @@ class @BackboneValidate
       if /^mailto:/i.test(value)
         return true
 
+      if value.indexOf(' ') isnt -1
+        return true
+
       @pattern BackboneValidate.patterns.email, value, attrs
 
     url: (value, attrs) ->

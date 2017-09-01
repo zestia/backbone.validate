@@ -112,6 +112,9 @@
         if (/^mailto:/i.test(value)) {
           return true;
         }
+        if (value.indexOf(' ') !== -1) {
+          return true;
+        }
         return this.pattern(BackboneValidate.patterns.email, value, attrs);
       },
       url: function(value, attrs) {
