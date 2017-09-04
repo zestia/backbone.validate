@@ -71,6 +71,9 @@ describe 'Default validators', ->
     it 'should return true when an email is in the format name (email)', ->
       expect(BackboneValidate.validators.email('Name Surname (email@gmail.com)')).toBe(true)
 
+    it 'should return false when an email contains a plus in the first part', ->
+      expect(BackboneValidate.validators.email('foo+bar@gmail.com')).toBe(false)
+
   describe 'the "maxLength" validator', ->
     it 'should be exposed', ->
       expect(BackboneValidate.validators.maxLength).toBeDefined()
