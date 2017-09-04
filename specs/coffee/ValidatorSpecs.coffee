@@ -77,6 +77,9 @@ describe 'Default validators', ->
     it 'should return false when an email TLD is long', ->
       expect(BackboneValidate.validators.email('foo@gmail.community')).toBe(false)
 
+    it 'should return false when a local path is used as the first part', ->
+      expect(BackboneValidate.validators.email('"Hello World"@gmail.com')).toBe(false)
+
   describe 'the "maxLength" validator', ->
     it 'should be exposed', ->
       expect(BackboneValidate.validators.maxLength).toBeDefined()
