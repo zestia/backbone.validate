@@ -65,6 +65,12 @@ describe 'Default validators', ->
     it 'should return true when an email contains a space', ->
       expect(BackboneValidate.validators.email('someemail@google.com Name Surname')).toBe(true)
 
+    it 'should return true when an email ends with a period', ->
+      expect(BackboneValidate.validators.email('someemail@google.com.')).toBe(true)
+
+    it 'should return true when an email is in the format name (email)', ->
+      expect(BackboneValidate.validators.email('Name Surname (email@gmail.com)')).toBe(true)
+
   describe 'the "maxLength" validator', ->
     it 'should be exposed', ->
       expect(BackboneValidate.validators.maxLength).toBeDefined()
