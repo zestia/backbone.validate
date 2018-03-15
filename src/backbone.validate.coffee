@@ -24,8 +24,6 @@ class @BackboneValidate
     if /(\.?\w+\[\]){2,}/.test(name) then throw new Error('Backbone.Validate: Nested arrays not supported')
     if /\[\](\.\w+){2,}/.test(name) then throw new Error('Backbone.Validate: Nesting within an array not supported')
 
-    console.log "DEBUG: #{name}"
-
     fullName = name
     index = /\[(\d*)\]/.exec(fullName)?[1]
     tokens = name.split('.')

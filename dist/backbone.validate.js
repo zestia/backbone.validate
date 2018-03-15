@@ -51,7 +51,6 @@
       if (/\[\](\.\w+){2,}/.test(name)) {
         throw new Error('Backbone.Validate: Nesting within an array not supported');
       }
-      console.log("DEBUG: " + name);
       fullName = name;
       index = (ref = /\[(\d*)\]/.exec(fullName)) != null ? ref[1] : void 0;
       tokens = name.split('.');
