@@ -17,6 +17,9 @@
         for (fieldName in ref) {
           fieldValidations = ref[fieldName];
           fieldDetails = this.parseName(fieldName);
+          if (fieldDetails == null) {
+            continue;
+          }
           if (_.isArray(fieldDetails.value)) {
             ref1 = fieldDetails.value;
             for (index = i = 0, len = ref1.length; i < len; index = ++i) {
@@ -48,6 +51,7 @@
       if (/\[\](\.\w+){2,}/.test(name)) {
         throw new Error('Backbone.Validate: Nesting within an array not supported');
       }
+      console.log("DEBUG: " + name);
       fullName = name;
       index = (ref = /\[(\d*)\]/.exec(fullName)) != null ? ref[1] : void 0;
       tokens = name.split('.');
@@ -56,6 +60,9 @@
         t = tokens[i];
         name = t.replace(/\[(\d+)?\]$/, '');
         value = value == null ? this.attrs[name] : _.isArray(value) ? _.map(value, name) : value[name];
+      }
+      if (value == null) {
+        return null;
       }
       if ((index != null) && index.length > 0) {
         value = value[index];

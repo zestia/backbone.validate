@@ -7,6 +7,8 @@ class @BackboneValidate
       for fieldName, fieldValidations of @validations
         fieldDetails = @parseName fieldName
 
+        continue unless fieldDetails?
+
         if _.isArray(fieldDetails.value)
           for value, index in fieldDetails.value
             fieldErrors = @applyValidations value, fieldValidations
@@ -22,6 +24,8 @@ class @BackboneValidate
     if /(\.?\w+\[\]){2,}/.test(name) then throw new Error('Backbone.Validate: Nested arrays not supported')
     if /\[\](\.\w+){2,}/.test(name) then throw new Error('Backbone.Validate: Nesting within an array not supported')
 
+    console.log "DEBUG: #{name}"
+
     fullName = name
     index = /\[(\d*)\]/.exec(fullName)?[1]
     tokens = name.split('.')
@@ -36,6 +40,8 @@ class @BackboneValidate
         _.map value, name
       else
         value[name]
+
+    return null unless value?
 
     value = value[index] if index? and index.length > 0
 
