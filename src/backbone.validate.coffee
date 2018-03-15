@@ -39,9 +39,7 @@ class @BackboneValidate
       else
         value[name]
 
-    return null unless value?
-
-    value = value[index] if index? and index.length > 0
+    value = value[index] if index? and index.length > 0 and value?
 
     { name: name, fullName: fullName, value: value }
 
